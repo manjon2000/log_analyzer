@@ -10,16 +10,15 @@ pub fn parse_log
     let mut mapping_results = HashMap::new();
     let serialize_log = Regex::new(
         &pattern.to_string()
-    );
-    if let Ok(result_regex) = serialize_log {
-        if let Some(serialize) = result_regex.captures(&log) {
-            for element in fields.iter() {
-                if let Some(field) = serialize.name(element.as_str()) {
-                    mapping_results.insert(
-                        element.clone(),
-                        field.as_str().to_string()
-                    );
-                }
+    ).map_err(|e| e.to_string())?;
+
+    if let Some(serialize) = serialize_log.captures(&log) {
+        for element in fields.iter() {
+            if let Some(field) = serialize.name(element.as_str()) {
+                mapping_results.insert(
+                    element.clone(),
+                    field.as_str().to_string()
+                );
             }
         }
     }

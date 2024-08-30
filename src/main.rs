@@ -1,83 +1,79 @@
 mod pattern;
 mod parse;
+mod filter;
+mod file;
+
+use serde::{Deserialize, Serialize};
 
 use std::*;
-use std::cmp::PartialEq;
-use std::collections::HashMap;
-use std::io::{BufRead};
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 use std::path::Path;
-use crate::parse::parse_log;
+use std::time::SystemTime;
+use crate::file::read_lines_text_plain;
+use crate::parse::*;
 use crate::pattern::*;
 
-// ip, identity, userid, date, method, path, protocol, status, bytes, referer, user_agent
+const RESET: &str = "\x1b[0m";
+const RED: &str = "\x1b[31m";
+const GREEN: &str = "\x1b[32m";
+const YELLOW: &str = "\x1b[33m";
+const BLUE: &str = "\x1b[34m";
 
-fn read_lines_text_plain(path: &Path) -> Result<Vec<String>, String>  {
-    let read_file = fs::read_to_string(path)
-        .map_err(|e| e.to_string())?;
-    Ok(
-        read_file.lines()
-            .map(|lines| lines.to_string())
-            .collect::<Vec<String>>()
-    )
+fn main() -> Result<(), Box<dyn std::error::Error>>  {
 
-}
+    let file_config = File::open("./config.log.json")
+        .expect("Error open file");
+    let reader = BufReader::new(file_config);
+    let config: LogConfig = serde_json::from_reader(reader)?;
 
-fn main() {
 
-    let log_access_apache = LogPattern::new(
-        "apache",
-        r#"(?P<ip>[^\s]+) (?P<identity>[^\s]+) (?P<userid>[^\s]+) \[(?P<date>[^\]]+)\] "(?P<method>[A-Z]+) (?P<path>[^\s]+) (?P<protocol>[^\s]+)" (?P<status>\d+) (?P<bytes>\d+|-) "(?P<referer>[^"]*)" "(?P<user_agent>[^"]*)""#,
-        "./src/access.log",
-        vec![
-            "ip".to_string(),
-            "identity".to_string(),
-            "userid".to_string(),
-            "date".to_string(),
-            "method".to_string(),
-            "path".to_string(),
-            "protocol".to_string(),
-            "status".to_string(),
-            "bytes".to_string(),
-            "referer".to_string(),
-            "user_agent".to_string()
-        ],
-        TypeLogPattern::TEXT_PLAIN
-    );
+    let mut timestamp_logs: Vec<SystemTime> = Vec::new();
 
-    let patterns = vec![
-        log_access_apache,
-    ];
+    for (key, log) in config.logs.iter() {
+        let metadata = fs::metadata(Path::new(&log.path));
+        if let Ok(metadata) = metadata {
+            let modified = metadata.modified();
+            if let Ok(modified) = modified {
+                timestamp_logs.push(modified);
+            }
+        }
+    }
 
-    let mut results_fields: Vec<HashMap<String, String>> = Vec::new();
-    for pattern in patterns.iter() {
-        if let Ok(result) = pattern {
-            match result.type_log {
-                TypeLogPattern::TEXT_PLAIN =>  {
-                    let lines = read_lines_text_plain(
-                        Path::new(&result.path)
-                    );
-                    if let Ok(ref lines) = lines {
-                        for log in lines.iter().cloned() {
-                            let mut log_str = log.clone();
-                            let result_serialize_log = parse_log(
-                                &log_str,
-                                result.pattern.to_string(),
-                                &result.fields
-                            );
+    loop {
+        for (index, log) in config.logs.iter().enumerate() {
+            let metadata = fs::metadata(Path::new(&log.1.path));
+            if let Ok(ref metadata) = metadata {
+                if let Ok(modified_time) = metadata.modified() {
+                    if modified_time > timestamp_logs[index] {
+                        timestamp_logs[index] = modified_time;
+                        println!(
+                            "{}The file {:?} has been modified, processing...{}",
+                            GREEN, &log.1.name, RESET
+                        );
 
-                            if let Ok(serialize) = result_serialize_log {
-                                results_fields.push(serialize);
-                                //println!("{:?}", serialize.get("ip"));
+                        let get_lines = read_lines_text_plain(
+                            Path::new(&log.1.path)
+                        );
+
+                        if let Ok(lines) = get_lines {
+                            for element in lines.iter() {
+                                let regex = format!("{}", &log.1.regex);
+
+                                let log_serialize = parse_log(
+                                  &element,
+                                  regex,
+                                  &log.1.fields
+                                ).expect("Regex no working");
+
+                                println!("{:?}", log_serialize);
                             }
                         }
+
                     }
-                },
-                TypeLogPattern::JSON => {},
-                TypeLogPattern::NONE => {
-                    println!("No specific type log");
-                    break;
                 }
             }
         }
     }
+
 }
