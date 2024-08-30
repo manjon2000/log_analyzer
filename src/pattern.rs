@@ -1,35 +1,23 @@
-use regex::Regex;
+use std::collections::HashMap;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Deserialize, Serialize, Debug)]
 pub enum TypeLogPattern {
     TEXT_PLAIN,
     JSON,
     NONE
 }
 
-#[derive(Debug)]
-pub struct LogPattern {
-    pub name: String,
-    pub pattern: Regex,
-    pub path: String,
-    pub fields: Vec<String>,
-    pub type_log: TypeLogPattern
+#[derive(Serialize, Deserialize, Debug)]
+pub struct LogConfig {
+    pub logs: HashMap<String, Log>,
 }
 
-impl LogPattern {
-   pub fn new(
-       name: &str,
-       pattern: &str,
-       path: &str,
-       fields: Vec<String>,
-       type_log: TypeLogPattern
-   ) -> Result<Self, regex::Error> {
-        Ok(LogPattern{
-            name: name.to_string(),
-            pattern: Regex::new(pattern)?,
-            path: path.to_string(),
-            fields: fields.into_iter().map(String::from).collect(),
-            type_log
-        })
-    }
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Log {
+    pub name: String,
+    pub regex: String,
+    pub path: String,
+    pub type_log: TypeLogPattern,
+    pub fields: Vec<String>,
 }

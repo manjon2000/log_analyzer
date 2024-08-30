@@ -35,7 +35,6 @@
     - El sistema debe manejar errores y excepciones de manera robusta, garantizando la integridad de los datos procesados.
 
 4. **Facilidad de Uso**:
-    - Debe contar con una interfaz de línea de comandos (CLI) intuitiva y fácil de usar, con documentación clara.
     - Soporte para configuración mediante archivos de configuración (por ejemplo, TOML, YAML).
 
 5. **Portabilidad**:
@@ -59,4 +58,3 @@
 4. **Documentación**:
     - Documentación clara del código y manual de usuario para la CLI.
     - Comentarios en el código siguiendo las mejores prácticas de Rust.
-
