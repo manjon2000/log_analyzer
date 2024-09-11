@@ -1,4 +1,4 @@
-127.0.0.1 - - [09/May/2024:23:38:59 +0200] "GET /phpmyadmin/ HTTP/1.1" 200 17984 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0"
+127.0.0.1 - - [09/May/2024:23:38:59 +0200] "GET /phpmyadmin/ HTTP/1.1" 201 17984 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0"
 127.0.0.1 - - [09/May/2024:23:39:00 +0200] "GET /phpmyadmin/themes/pmahomme/jquery/jquery-ui.css HTTP/1.1" 200 36566 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0"
 127.0.0.1 - - [09/May/2024:23:39:00 +0200] "GET /phpmyadmin/js/vendor/codemirror/lib/codemirror.css?v=5.2.1 HTTP/1.1" 200 8720 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0"
 127.0.0.1 - - [09/May/2024:23:39:00 +0200] "POST /phpmyadmin/js/vendor/codemirror/addon/lint/lint.css?v=5.2.1 HTTP/1.1" 200 3035 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0"
