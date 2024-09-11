@@ -12,7 +12,7 @@ pub fn parse_log
         &pattern.to_string()
     ).map_err(|e| e.to_string())?;
 
-    if let Some(serialize) = serialize_log.captures(&log) {
+    if let Some(serialize) = serialize_log.captures(log) {
         for element in fields.iter() {
             if let Some(field) = serialize.name(element.as_str()) {
                 mapping_results.insert(
