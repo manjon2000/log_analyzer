@@ -4,7 +4,7 @@
       "name": "apache_access",
       "regex": "(?P<ip>[^\\s]+) (?P<identity>[^\\s]+) (?P<userid>[^\\s]+) \\[(?P<date>[^\\]]+)\\] \"(?P<method>[A-Z]+) (?P<path>[^\\s]+) (?P<protocol>[^\\s]+)\" (?P<status>\\d+) (?P<bytes>\\d+|-) \"(?P<referer>[^\"]*)\" \"(?P<user_agent>[^\"]*)\"",
       "path": "./src/access.log",
-      "type_log": "TEXT_PLAIN",
+      "type_log": "TextPlain",
       "fields": [
         "ip",
         "identity",

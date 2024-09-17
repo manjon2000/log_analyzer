@@ -3,9 +3,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Eq, PartialEq)]
 pub enum TypeLogPattern {
-    TEXT_PLAIN,
-    JSON,
-    NONE
+    TextPlain,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
